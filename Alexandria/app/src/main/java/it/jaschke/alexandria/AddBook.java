@@ -1,15 +1,17 @@
 package it.jaschke.alexandria;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,27 +19,31 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.vision.barcode.Barcode;
 
+import it.jaschke.alexandria.barcode.BarcodeCaptureActivity;
 import it.jaschke.alexandria.data.AlexandriaContract;
 import it.jaschke.alexandria.services.BookService;
 import it.jaschke.alexandria.services.DownloadImage;
+import it.jaschke.alexandria.util.Utility;
 
 
-public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
+        SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "INTENT_TO_SCAN_ACTIVITY";
     private EditText ean;
     private final int LOADER_ID = 1;
     private View rootView;
+    private TextView mEmptyView;
     private final String EAN_CONTENT="eanContent";
-    private static final String SCAN_FORMAT = "scanFormat";
-    private static final String SCAN_CONTENTS = "scanContents";
-
     private String mScanFormat = "Format:";
     private String mScanContents = "Contents:";
 
-
+    private static final String SCAN_FORMAT = "scanFormat";
+    private static final String SCAN_CONTENTS = "scanContents";
+    private static final int RC_BARCODE_CAPTURE = 9001;
 
     public AddBook(){
     }
@@ -54,6 +60,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.fragment_add_book, container, false);
+        mEmptyView = (TextView) rootView.findViewById(R.id.emptyView);
         ean = (EditText) rootView.findViewById(R.id.ean);
 
         ean.addTextChangedListener(new TextWatcher() {
@@ -90,18 +97,30 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         rootView.findViewById(R.id.scan_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // This is the callback method that the system will invoke when your button is
-                // clicked. You might do this by launching another app or by including the
-                //functionality directly in this app.
-                // Hint: Use a Try/Catch block to handle the Intent dispatch gracefully, if you
-                // are using an external app.
-                //when you're done, remove the toast below.
-                Context context = getActivity();
-                CharSequence text = "This button should let you scan a book for its barcode!";
-                int duration = Toast.LENGTH_SHORT;
 
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
+                // Launch Barcode activity.
+                Intent intent = new Intent(getActivity(), BarcodeCaptureActivity.class);
+                startActivityForResult(intent, RC_BARCODE_CAPTURE);
+
+//                BarcodeDetector detector = new BarcodeDetector.Builder(getActivity())
+//                        .setBarcodeFormats(Barcode.EAN_13)
+//                        .build();
+//                if (detector.isOperational()) {
+//                    Frame frame = null;
+//                    SparseArray<Barcode> barcodes = detector.detect(frame);
+//
+//                    Barcode barcode;
+//                    for (int i=0; i<barcodes.size(); i++) {
+//                        barcode = barcodes.valueAt(i);
+//                        String value = barcode.rawValue;
+//                        Log.d("ADDBOOK FRAG", "Raw value from barcode is: " + value);
+//                    }
+//                } else {
+//                    Toast toast = Toast.makeText(getActivity(),
+//                            getString(R.string.google_play_services_barcode_detector_not_operational),
+//                            Toast.LENGTH_SHORT);
+//                    toast.show();
+//                }
 
             }
         });
@@ -157,6 +176,8 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
     @Override
     public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor data) {
+        updateEmptyView();
+
         if (!data.moveToFirst()) {
             return;
         }
@@ -197,11 +218,77 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         rootView.findViewById(R.id.bookCover).setVisibility(View.INVISIBLE);
         rootView.findViewById(R.id.save_button).setVisibility(View.INVISIBLE);
         rootView.findViewById(R.id.delete_button).setVisibility(View.INVISIBLE);
+        mEmptyView.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         activity.setTitle(R.string.scan);
+    }
+
+    @Override
+    public void onResume() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        sp.registerOnSharedPreferenceChangeListener(this);
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        sp.unregisterOnSharedPreferenceChangeListener(this);
+        super.onPause();
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getString(R.string.pref_book_search_status_key))) {
+            updateEmptyView();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == RC_BARCODE_CAPTURE) {
+            if (resultCode == CommonStatusCodes.SUCCESS) {
+                if (data != null) {
+                    Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
+                    Log.d("ADDBOOK FRAG", "Barcode read: " + barcode.displayValue);
+                    ean.setText(barcode.displayValue);
+                } else {
+                    Log.d("ADDBOOK FRAG", "No barcode captured, intent data is null");
+                }
+            } else {
+                Log.d("ADDBOOK FRAG", "ERROR barcode resultCode: " + CommonStatusCodes.getStatusCodeString(resultCode));
+            }
+        }
+        else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void updateEmptyView() {
+        @BookService.BookSearchStatus int bookSearchStatus =
+                Utility.getBookSearchStatus(getActivity());
+        if ((bookSearchStatus == BookService.BOOK_SEARCH_STATUS_OK) ||
+                (bookSearchStatus == BookService.BOOK_SEARCH_STATUS_UNKNOWN)) {
+            mEmptyView.setVisibility(View.INVISIBLE);
+        } else if (bookSearchStatus == BookService.BOOK_SEARCH_STATUS_NOT_FOUND) {
+            mEmptyView.setVisibility(View.VISIBLE);
+            mEmptyView.setText(getString(R.string.book_search_not_found));
+        } else if (bookSearchStatus == BookService.BOOK_SEARCH_STATUS_INVALID) {
+            mEmptyView.setVisibility(View.VISIBLE);
+            mEmptyView.setText(getString(R.string.book_search_invalid));
+        } else if (bookSearchStatus == BookService.BOOK_SEARCH_STATUS_KO) {
+            mEmptyView.setVisibility(View.VISIBLE);
+            if (Utility.checkNetworkConnection(getActivity())) {
+                mEmptyView.setText(getString(R.string.book_search_ko) + " " +
+                        getString(R.string.book_search_try_it_later));
+            } else {
+                mEmptyView.setText(getString(R.string.book_search_ko) + " " +
+                        getString(R.string.book_search_network_unavailable));
+            }
+        }
     }
 }

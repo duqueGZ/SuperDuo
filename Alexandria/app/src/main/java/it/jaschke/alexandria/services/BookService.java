@@ -5,7 +5,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.v4.content.LocalBroadcastManager;
+import android.support.annotation.IntDef;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -16,12 +16,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import it.jaschke.alexandria.MainActivity;
-import it.jaschke.alexandria.R;
 import it.jaschke.alexandria.data.AlexandriaContract;
+import it.jaschke.alexandria.util.Utility;
 
 
 /**
@@ -35,8 +36,17 @@ public class BookService extends IntentService {
 
     public static final String FETCH_BOOK = "it.jaschke.alexandria.services.action.FETCH_BOOK";
     public static final String DELETE_BOOK = "it.jaschke.alexandria.services.action.DELETE_BOOK";
-
     public static final String EAN = "it.jaschke.alexandria.services.extra.EAN";
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({BOOK_SEARCH_STATUS_OK, BOOK_SEARCH_STATUS_KO,
+            BOOK_SEARCH_STATUS_INVALID, BOOK_SEARCH_STATUS_NOT_FOUND, BOOK_SEARCH_STATUS_UNKNOWN})
+    public @interface BookSearchStatus {}
+    public static final int BOOK_SEARCH_STATUS_OK = 0;
+    public static final int BOOK_SEARCH_STATUS_KO = 1;
+    public static final int BOOK_SEARCH_STATUS_INVALID = 2;
+    public static final int BOOK_SEARCH_STATUS_NOT_FOUND = 3;
+    public static final int BOOK_SEARCH_STATUS_UNKNOWN = 4;
 
     public BookService() {
         super("Alexandria");
@@ -76,6 +86,8 @@ public class BookService extends IntentService {
             return;
         }
 
+        Utility.setBookSearchStatus(getApplicationContext(), BOOK_SEARCH_STATUS_UNKNOWN);
+
         Cursor bookEntry = getContentResolver().query(
                 AlexandriaContract.BookEntry.buildBookUri(Long.parseLong(ean)),
                 null, // leaving "columns" null just returns all the columns.
@@ -86,6 +98,7 @@ public class BookService extends IntentService {
 
         if(bookEntry.getCount()>0){
             bookEntry.close();
+            Utility.setBookSearchStatus(getApplicationContext(), BOOK_SEARCH_STATUS_OK);
             return;
         }
 
@@ -114,6 +127,7 @@ public class BookService extends IntentService {
             InputStream inputStream = urlConnection.getInputStream();
             StringBuffer buffer = new StringBuffer();
             if (inputStream == null) {
+                Utility.setBookSearchStatus(getApplicationContext(), BOOK_SEARCH_STATUS_KO);
                 return;
             }
 
@@ -125,11 +139,13 @@ public class BookService extends IntentService {
             }
 
             if (buffer.length() == 0) {
+                Utility.setBookSearchStatus(getApplicationContext(), BOOK_SEARCH_STATUS_INVALID);
                 return;
             }
             bookJsonString = buffer.toString();
         } catch (Exception e) {
             Log.e(LOG_TAG, "Error ", e);
+            Utility.setBookSearchStatus(getApplicationContext(), BOOK_SEARCH_STATUS_KO);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -144,10 +160,13 @@ public class BookService extends IntentService {
 
         }
 
+        if ((bookJsonString==null) || (bookJsonString.isEmpty())) {
+            Utility.setBookSearchStatus(getApplicationContext(), BOOK_SEARCH_STATUS_KO);
+            return;
+        }
+
         final String ITEMS = "items";
-
         final String VOLUME_INFO = "volumeInfo";
-
         final String TITLE = "title";
         final String SUBTITLE = "subtitle";
         final String AUTHORS = "authors";
@@ -162,9 +181,10 @@ public class BookService extends IntentService {
             if(bookJson.has(ITEMS)){
                 bookArray = bookJson.getJSONArray(ITEMS);
             }else{
-                Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
-                messageIntent.putExtra(MainActivity.MESSAGE_KEY,getResources().getString(R.string.not_found));
-                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(messageIntent);
+                Utility.setBookSearchStatus(getApplicationContext(), BOOK_SEARCH_STATUS_NOT_FOUND);
+//                Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
+//                messageIntent.putExtra(MainActivity.MESSAGE_KEY,getResources().getString(R.string.not_found));
+//                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(messageIntent);
                 return;
             }
 
@@ -196,8 +216,11 @@ public class BookService extends IntentService {
                 writeBackCategories(ean,bookInfo.getJSONArray(CATEGORIES) );
             }
 
+            Log.d(LOG_TAG, "Fetch Book Service successfully completed");
+            Utility.setBookSearchStatus(getApplicationContext(), BOOK_SEARCH_STATUS_OK);
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Error ", e);
+            Utility.setBookSearchStatus(getApplicationContext(), BOOK_SEARCH_STATUS_INVALID);
         }
     }
 

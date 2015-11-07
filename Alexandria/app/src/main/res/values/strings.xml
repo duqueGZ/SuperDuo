@@ -25,7 +25,35 @@
     <string name="back_button">go back</string>
     <string name="share_text">A must read book: </string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="about_text">This application gets book information from a Google API. All titles, cover images, and author information come from there.
-    The original version of this app was built by Sascha Jaschke, and a modified version is given to students in the Udacity Android Nanodegree program. </string>
+    <string name="about_text">This application gets book information from a Google API. All titles,
+        cover images, and author information come from there. The original version of this app was
+        built by Sascha Jaschke. This current version came from a modified version given to
+        students in the Udacity Android Nanodegree program and has been built by David Duque. </string>
+
+    <!-- Shared Preferences strings -->
+    <string name="pref_book_search_status_key" translatable="false">book_search</string>
+
+    <!-- Book Search Status strings -->
+    <string name="book_search_not_found">No book found for provided ISBN. Please, try with another
+        value.</string>
+    <string name="book_search_invalid">The server is not returning valid data. Please, please check
+        for an updated version of Alexandria.</string>
+    <string name="book_search_ko">No book info could be retrieved</string>
+    <string name="book_search_network_unavailable">The network is not available. Please, check
+        device configuration</string>
+    <string name="book_search_try_it_later">Please, try it again later</string>
+
+    <string name="google_play_services_barcode_detector_not_operational">
+        Barcode detector is not operational. Please, check if Google Play Services are correctly
+        configured in the device.
+    </string>
+
+    <!-- Barcode detection strings -->
+    <string name="ok">OK</string>
+    <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
+    <string name="low_storage_error">Barcode detector dependencies cannot be downloaded due to low
+        device storage</string>
+    <string name="no_camera_permission">The barcode scanning cannot run because it does not have
+        the camera permission.</string>
+    <string name="title_activity_barcode">Read barcode</string>
 </resources>
