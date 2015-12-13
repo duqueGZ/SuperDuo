@@ -11,7 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,8 +19,10 @@ import android.widget.Toast;
 
 import it.jaschke.alexandria.api.Callback;
 
+public class MainActivity extends AppCompatActivity
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, Callback {
 
-public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, Callback {
+    private static final String BOOK_DETAIL_FRAGMENT_NAME = "BookDetail";
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -147,7 +149,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         }
         getSupportFragmentManager().beginTransaction()
                 .replace(id, fragment)
-                .addToBackStack("Book Detail")
+                .addToBackStack(BOOK_DETAIL_FRAGMENT_NAME)
                 .commit();
 
     }
@@ -156,7 +158,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent.getStringExtra(MESSAGE_KEY)!=null){
-                Toast.makeText(MainActivity.this, intent.getStringExtra(MESSAGE_KEY), Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, intent.getStringExtra(MESSAGE_KEY),
+                        Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -178,6 +181,4 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         }
         super.onBackPressed();
     }
-
-
 }

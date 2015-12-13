@@ -29,20 +29,15 @@ import it.jaschke.alexandria.services.BookService;
 import it.jaschke.alexandria.services.DownloadImage;
 import it.jaschke.alexandria.util.Utility;
 
-
 public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
         SharedPreferences.OnSharedPreferenceChangeListener {
-    private static final String TAG = "INTENT_TO_SCAN_ACTIVITY";
+    private static final String LOG_TAG = AddBook.class.getSimpleName();
     private EditText ean;
     private final int LOADER_ID = 1;
     private View rootView;
     private TextView mEmptyView;
     private final String EAN_CONTENT="eanContent";
-    private String mScanFormat = "Format:";
-    private String mScanContents = "Contents:";
 
-    private static final String SCAN_FORMAT = "scanFormat";
-    private static final String SCAN_CONTENTS = "scanContents";
     private static final int RC_BARCODE_CAPTURE = 9001;
 
     public AddBook(){
@@ -57,12 +52,12 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.fragment_add_book, container, false);
         mEmptyView = (TextView) rootView.findViewById(R.id.emptyView);
         ean = (EditText) rootView.findViewById(R.id.ean);
-
         ean.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -80,6 +75,9 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 //catch isbn10 numbers
                 if(ean.length()==10 && !ean.startsWith("978")){
                     ean="978"+ean;
+                }
+                if (ean.length()==0) {
+                    AddBook.this.ean.setHint(R.string.input_hint);
                 }
                 if(ean.length()<13){
                     clearFields();
@@ -101,27 +99,6 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 // Launch Barcode activity.
                 Intent intent = new Intent(getActivity(), BarcodeCaptureActivity.class);
                 startActivityForResult(intent, RC_BARCODE_CAPTURE);
-
-//                BarcodeDetector detector = new BarcodeDetector.Builder(getActivity())
-//                        .setBarcodeFormats(Barcode.EAN_13)
-//                        .build();
-//                if (detector.isOperational()) {
-//                    Frame frame = null;
-//                    SparseArray<Barcode> barcodes = detector.detect(frame);
-//
-//                    Barcode barcode;
-//                    for (int i=0; i<barcodes.size(); i++) {
-//                        barcode = barcodes.valueAt(i);
-//                        String value = barcode.rawValue;
-//                        Log.d("ADDBOOK FRAG", "Raw value from barcode is: " + value);
-//                    }
-//                } else {
-//                    Toast toast = Toast.makeText(getActivity(),
-//                            getString(R.string.google_play_services_barcode_detector_not_operational),
-//                            Toast.LENGTH_SHORT);
-//                    toast.show();
-//                }
-
             }
         });
 
@@ -185,20 +162,24 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         String bookTitle = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.TITLE));
         ((TextView) rootView.findViewById(R.id.bookTitle)).setText(bookTitle);
 
-        String bookSubTitle = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.SUBTITLE));
+        String bookSubTitle = data.getString(data
+                .getColumnIndex(AlexandriaContract.BookEntry.SUBTITLE));
         ((TextView) rootView.findViewById(R.id.bookSubTitle)).setText(bookSubTitle);
 
         String authors = data.getString(data.getColumnIndex(AlexandriaContract.AuthorEntry.AUTHOR));
-        String[] authorsArr = authors.split(",");
-        ((TextView) rootView.findViewById(R.id.authors)).setLines(authorsArr.length);
-        ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",","\n"));
+        if (authors!=null) {
+            String[] authorsArr = authors.split(",");
+            ((TextView) rootView.findViewById(R.id.authors)).setLines(authorsArr.length);
+            ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",","\n"));
+        }
         String imgUrl = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.IMAGE_URL));
         if(Patterns.WEB_URL.matcher(imgUrl).matches()){
             new DownloadImage((ImageView) rootView.findViewById(R.id.bookCover)).execute(imgUrl);
             rootView.findViewById(R.id.bookCover).setVisibility(View.VISIBLE);
         }
 
-        String categories = data.getString(data.getColumnIndex(AlexandriaContract.CategoryEntry.CATEGORY));
+        String categories = data.getString(data
+                .getColumnIndex(AlexandriaContract.CategoryEntry.CATEGORY));
         ((TextView) rootView.findViewById(R.id.categories)).setText(categories);
 
         rootView.findViewById(R.id.save_button).setVisibility(View.VISIBLE);
@@ -207,7 +188,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
     @Override
     public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
-
+        // do nothing
     }
 
     private void clearFields(){
@@ -254,13 +235,14 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             if (resultCode == CommonStatusCodes.SUCCESS) {
                 if (data != null) {
                     Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
-                    Log.d("ADDBOOK FRAG", "Barcode read: " + barcode.displayValue);
+                    Log.d(LOG_TAG, "Barcode read: " + barcode.displayValue);
                     ean.setText(barcode.displayValue);
                 } else {
-                    Log.d("ADDBOOK FRAG", "No barcode captured, intent data is null");
+                    Log.d(LOG_TAG, "No barcode captured, intent data is null");
                 }
             } else {
-                Log.d("ADDBOOK FRAG", "ERROR barcode resultCode: " + CommonStatusCodes.getStatusCodeString(resultCode));
+                Log.d(LOG_TAG, "ERROR barcode resultCode: "
+                        + CommonStatusCodes.getStatusCodeString(resultCode));
             }
         }
         else {

@@ -15,7 +15,6 @@ package it.jaschke.alexandria.barcode;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -114,46 +113,36 @@ public class CameraSource {
     @Retention(RetentionPolicy.SOURCE)
     private @interface FlashMode {}
 
-    private Context mContext;
-
     private final Object mCameraLock = new Object();
-
+    private Context mContext;
     // Guarded by mCameraLock
     private Camera mCamera;
-
     private int mFacing = CAMERA_FACING_BACK;
-
     /**
      * Rotation of the device, and thus the associated preview images captured from the device.
      * See {@link Frame.Metadata#getRotation()}.
      */
     private int mRotation;
-
     private Size mPreviewSize;
-
     // These values may be requested by the caller.  Due to hardware limitations, we may need to
     // select close, but not exactly the same values for these.
     private float mRequestedFps = 30.0f;
     private int mRequestedPreviewWidth = 1024;
     private int mRequestedPreviewHeight = 768;
 
-
     private String mFocusMode = null;
     private String mFlashMode = null;
-
     // These instances need to be held onto to avoid GC of their underlying resources.  Even though
     // these aren't used outside of the method that creates them, they still must have hard
     // references maintained to them.
     private SurfaceView mDummySurfaceView;
     private SurfaceTexture mDummySurfaceTexture;
-
     /**
      * Dedicated thread and associated runnable for calling into the detector with frames, as the
      * frames become available from the camera.
      */
     private Thread mProcessingThread;
     private FrameProcessingRunnable mFrameProcessor;
-
     /**
      * Map to convert between a byte array, received from the camera, and its associated byte
      * buffer.  We use byte buffers internally because this is a more efficient way to call into
@@ -417,9 +406,10 @@ public class CameraSource {
                 mCamera.setPreviewCallbackWithBuffer(null);
                 try {
                     // We want to be compatible back to Gingerbread, but SurfaceTexture
-                    // wasn't introduced until Honeycomb.  Since the interface cannot use a SurfaceTexture, if the
-                    // developer wants to display a preview we must use a SurfaceHolder.  If the developer doesn't
-                    // want to display a preview we use a SurfaceTexture if we are running at least Honeycomb.
+                    // wasn't introduced until Honeycomb.  Since the interface cannot use
+                    // a SurfaceTexture, if the developer wants to display a preview we must use
+                    // a SurfaceHolder.  If the developer doesn't want to display a preview we use
+                    // a SurfaceTexture if we are running at least Honeycomb.
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                         mCamera.setPreviewTexture(null);
@@ -508,8 +498,8 @@ public class CameraSource {
     /**
      * Gets the current focus mode setting.
      *
-     * @return current focus mode. This value is null if the camera is not yet created. Applications should call {@link
-     * #autoFocus(AutoFocusCallback)} to start the focus if focus
+     * @return current focus mode. This value is null if the camera is not yet created.
+     * Applications should call {@link #autoFocus(AutoFocusCallback)} to start the focus if focus
      * mode is FOCUS_MODE_AUTO or FOCUS_MODE_MACRO.
      * @see Camera.Parameters#FOCUS_MODE_AUTO
      * @see Camera.Parameters#FOCUS_MODE_INFINITY
@@ -591,7 +581,8 @@ public class CameraSource {
     /**
      * Starts camera auto-focus and registers a callback function to run when
      * the camera is focused.  This method is only valid when preview is active
-     * (between {@link #start()} or {@link #start(SurfaceHolder)} and before {@link #stop()} or {@link #release()}).
+     * (between {@link #start()} or {@link #start(SurfaceHolder)} and before {@link #stop()} or
+     * {@link #release()}).
      * <p/>
      * <p>Callers should check
      * {@link #getFocusMode()} to determine if
@@ -639,7 +630,8 @@ public class CameraSource {
      * Sets camera auto-focus move callback.
      *
      * @param cb the callback to run
-     * @return {@code true} if the operation is supported (i.e. from Jelly Bean), {@code false} otherwise
+     * @return {@code true} if the operation is supported (i.e. from Jelly Bean), {@code false}
+     * otherwise
      */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public boolean setAutoFocusMoveCallback(@Nullable AutoFocusMoveCallback cb) {

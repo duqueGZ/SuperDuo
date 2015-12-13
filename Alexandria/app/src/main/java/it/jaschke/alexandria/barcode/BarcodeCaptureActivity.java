@@ -15,7 +15,6 @@ package it.jaschke.alexandria.barcode;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -56,6 +55,10 @@ import it.jaschke.alexandria.R;
  * size, and ID of each barcode.
  */
 public final class BarcodeCaptureActivity extends AppCompatActivity {
+    // constants used to pass extra data in the intent
+    public static final String BarcodeFormats = "BarcodeFormats";
+    public static final String BarcodeObject = "Barcode";
+
     private static final String LOG_TAG = BarcodeCaptureActivity.class.getSimpleName();
 
     // intent request code to handle updating play services if needed.
@@ -64,14 +67,9 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
     // permission request codes need to be < 256
     private static final int RC_HANDLE_CAMERA_PERM = 2;
 
-    // constants used to pass extra data in the intent
-    public static final String BarcodeFormats = "BarcodeFormats";
-    public static final String BarcodeObject = "Barcode";
-
     private CameraSource mCameraSource;
     private CameraSourcePreview mPreview;
     private GraphicOverlay<BarcodeGraphic> mGraphicOverlay;
-
     // helper objects for detecting taps and pinches.
     private ScaleGestureDetector scaleGestureDetector;
     private GestureDetector gestureDetector;
@@ -102,14 +100,14 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
         gestureDetector = new GestureDetector(this, new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
-        Snackbar.make(mGraphicOverlay, "Tap to capture. Pinch/Stretch to zoom",
+        Snackbar.make(mGraphicOverlay, getString(R.string.camera_tip_message),
                 Snackbar.LENGTH_LONG)
                 .show();
     }
 
     /**
      * Handles the requesting of the camera permission.  This includes
-     * showing a "Snackbar" message of why the permission is needed then
+     * showing a "Snackbar" message of why the permission is needed, then
      * sending the request.
      */
     private void requestCameraPermission() {
@@ -142,7 +140,6 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
     @Override
     public boolean onTouchEvent(MotionEvent e) {
         boolean b = scaleGestureDetector.onTouchEvent(e);
-
         boolean c = gestureDetector.onTouchEvent(e);
 
         return b || c || super.onTouchEvent(e);
@@ -193,12 +190,12 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
         }
 
         // Creates and starts the camera
-        CameraSource.Builder builder = new CameraSource.Builder(getApplicationContext(), barcodeDetector)
-                .setFacing(CameraSource.CAMERA_FACING_BACK)
+        CameraSource.Builder builder = new CameraSource.Builder(getApplicationContext(),
+                barcodeDetector).setFacing(CameraSource.CAMERA_FACING_BACK)
                 .setRequestedPreviewSize(1600, 1024)
                 .setRequestedFps(15.0f);
 
-        // make sure that auto focus is an available option
+        // Make sure that auto focus is an available option
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             builder = builder.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
         }
@@ -266,7 +263,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
 
         if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.d(LOG_TAG, "Camera permission granted - initialize the camera source");
-            // we have permission, so create the camerasource
+            // We have permission, so create the camerasource
             int formats = getIntent().getIntExtra(BarcodeFormats, Barcode.EAN_13);
             createCameraSource(formats);
             return;
@@ -282,8 +279,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Multitracker sample")
-                .setMessage(R.string.no_camera_permission)
+        builder.setMessage(R.string.no_camera_permission)
                 .setPositiveButton(R.string.ok, listener)
                 .show();
     }
@@ -294,7 +290,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
      * again when the camera source is created.
      */
     private void startCameraSource() throws SecurityException {
-        // check that the device has play services available.
+        // Check that the device has play services available.
         int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(
                 getApplicationContext());
         if (code != ConnectionResult.SUCCESS) {

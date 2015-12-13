@@ -2,9 +2,27 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="list_horizonal_matgin">2dp</dimen>
-    <dimen name="share_button_margin">150dp</dimen>
-    <dimen name="TeamNames">17sp</dimen>
-    <dimen name="Score">30sp</dimen>
-    <dimen name="League">15sp</dimen>
+    <dimen name="list_horizonal_margin">2dp</dimen>
+    <dimen name="share_button_margin">10dp</dimen>
+    <dimen name="team_names">12sp</dimen>
+    <dimen name="score">30sp</dimen>
+    <dimen name="detail_text">15sp</dimen>
+    <dimen name="widget_configuration_label">18sp</dimen>
+    <dimen name="date">10sp</dimen>
+    <dimen name="about_text">12sp</dimen>
+    <dimen name="widget_spinner_text">16sp</dimen>
+
+    <!-- Match Widget -->
+    <dimen name="widget_match_default_width">330dp</dimen>
+    <dimen name="widget_match_default_height">40dp</dimen>
+    <dimen name="widget_match_min_resize_width">220dp</dimen>
+    <dimen name="widget_match_min_resize_height">@dimen/widget_match_default_height</dimen>
+
+    <!-- Match List Widget -->
+    <dimen name="widget_match_list_default_width">250dp</dimen>
+    <dimen name="widget_match_list_default_height">180dp</dimen>
+    <dimen name="widget_match_list_min_resize_width">220dp</dimen>
+    <dimen name="widget_match_list_min_resize_height">
+        @dimen/widget_match_list_default_height
+    </dimen>
 </resources>

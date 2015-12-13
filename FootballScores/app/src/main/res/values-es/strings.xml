@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- General strings -->
+    <string name="sdf_format">dd-MM-yyyy</string>
+
+    <!-- Days strings -->
+    <string name="today">Hoy</string>
+    <string name="yesterday">Ayer</string>
+    <string name="tomorrow">Mañana</string>
+
+    <!-- Leagues strings -->
+    <string name="unknown_league">Liga no conocida</string>
+
+    <!-- Matches strings -->
+    <string name="matchday_text">Jornada</string>
+
+    <!-- Activity strings -->
+    <string name="share_text">Compartir</string>
+    <string name="share_match">Compartir el partido</string>
+    <string name="about">Acerca de</string>
+    <string name="about_text">
+        Esta aplicación muestra resultados de partidos de fútbol de la Premier League, Serie A,
+        Bundesliga, Primera Division.\n\n
+        Toda la información de los partidos se obtiene de la API gratuita football-data.org.\n\n
+        Todos los logos de equipos usados han sido obtenidos de http://hdlogo.wordpress.com/ con
+        permiso del dueño.\n\n
+        La versión original de esta aplicación fue creada por Yahia Khalid Ibn El Walid Ahmed
+        (y.k.ibnelwalid@gmail.com). \n\n
+        Esta versión actual viene de una versión modificada proporcionada a los estudiantes del
+        programa Android Nanodegree de Udacity, y ha sido desarrollada por David Duque.\n\n
+        Para reportar bugs o sugerencias, por favor, envíe un mail a david.duque.f@gmail.com\n\n
+        NOTA: Durante la pretemporada, información falsa (de prueba) es mostrada en la aplicación
+        para posibilitar probar sus funcionalidades.
+    </string>
+
+    <!-- Widgets related strings -->
+    <string name="title_widget_match">FS Partido</string>
+    <string name="title_widget_match_list">FS Lista de Partidos</string>
+    <string name="select_league">Escoja una liga</string>
+    <string name="select_favourite_team">Escoga su equipo favorito</string>
+    <string name="select_time_range">Escoja un rango de tiempo</string>
+    <string name="last_week_time_option">Última semana</string>
+    <string name="next_week_time_option">Próxima semana</string>
+    <string name="both_weeks_time_option">Ambas semanas</string>
+    <string name="ok_widget">Hecho</string>
+    <string name="no_info_available">Sin información de partidos disponible</string>
+</resources>

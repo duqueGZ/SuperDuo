@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Settings string arrays -->
+    <string-array name="widget_list_time_options">
+        <item>@string/last_week_time_option</item>
+        <item>@string/next_week_time_option</item>
+        <item>@string/both_weeks_time_option</item>
+    </string-array>
+
+    <string-array name="widget_match_time_options">
+        <item>@string/last_week_time_option</item>
+        <item>@string/next_week_time_option</item>
+    </string-array>
+</resources>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Menu items -->
+    <string name="books">Lista de Libros</string>
+    <string name="scan">Escanear/Añadir un Libro</string>
+    <string name="about">Acerca de</string>
+    <string name="navigation_drawer_open" >Abrir navigation drawer</string>
+    <string name="navigation_drawer_close">Cerrar navigation drawer</string>
+    <string name="action_settings">Ajustes</string>
+    <string name="action_share">Compartir</string>
+    <string name="share_text">Un libro recomendado:</string>
+
+    <!-- Activities strings -->
+    <string name="title_activity_settings">Ajustes</string>
+    <string name="title_activity_barcode">Escanear código</string>
+    <string name="scan_button">Escanear</string>
+    <string name="input_hint">ISBN-13. Solo dígitos.</string>
+    <string name="book_cover">Portada</string>
+    <string name="ok_button">Siguiente</string>
+    <string name="cancel_button">Cancelar</string>
+    <string name="not_found">Libro no encontrado</string>
+    <string name="search">Buscar</string>
+    <string name="delete">Borrar libro</string>
+    <string name="about_text">
+        Esta aplicación obtiene la información de los libros de una API de Google.\n\n
+        Toda la información acerca de títulos, imágenes y autores proviene de dicha API.\n\n
+        La versión original de la aplicación fue desarrollada por Sascha Jaschke.\n\n
+        Esta versión actual viene de una versión modificada proporcionada a los estudiantes del
+        programa Android Nanodegree de Udacity, y ha sido desarrollada por David Duque.\n\n
+        Para reportar bugs o sugerencias, por favor, envíe un mail a david.duque.f@gmail.com
+    </string>
+
+    <!-- Preferences strings -->
+    <string name="pref_startScreen">Seleccionar pantalla de inicio</string>
+    <string name="back_button">Atrás</string>
+
+    <!-- Book Search Status strings -->
+    <string name="book_search_not_found">
+        Libro no encontrado para el ISBN indicado. Por favor, pruebe con otro distinto.
+    </string>
+    <string name="book_search_invalid">
+        El servidor no está devolviendo información válida. Por favor, compruebe si existe una
+        versión más reciente de Alexandria.
+    </string>
+    <string name="book_search_ko">No se ha podido recuperar información de los libros.</string>
+    <string name="book_search_network_unavailable">
+        Conexión de red no disponible. Por favor, compruebe la configuración del dispositivo.
+    </string>
+    <string name="book_search_try_it_later">Por favor, inténtelo de nuevo más tarde.</string>
+
+    <string name="google_play_services_barcode_detector_not_operational">
+        El detector de códigos no está disponible. Por favor, compruebe si Google Play Services
+        está correctamente configurado en el dispositivo.
+    </string>
+
+    <!-- Barcode detection strings -->
+    <string name="ok">OK</string>
+    <string name="permission_camera_rationale">
+        Se necesita acceso a la cámara del dispositivo para utilizar el escaner de códigos.
+    </string>
+    <string name="low_storage_error">
+        Las dependencias del detector de código no pueden ser descargadas debido a falta de
+        espacio de almacenamiento en el dispositivo.
+    </string>
+    <string name="no_camera_permission">
+        El escaner de códigos no puede ejecutarse porque no se tiene el permiso de acceso a la
+        cámara.
+    </string>
+    <string name="camera_tip_message">
+        Toca para capturar. Encoja o estire para ampliar o reducir.
+    </string>
+</resources>

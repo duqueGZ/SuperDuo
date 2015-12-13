@@ -1,6 +1,5 @@
 package barqsoft.footballscores;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,75 +12,102 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import barqsoft.footballscores.service.myFetchService;
+import java.util.Arrays;
 
-/**
- * A placeholder fragment containing a simple view.
- */
+import barqsoft.footballscores.adapters.ScoresAdapter;
+import barqsoft.footballscores.data.DatabaseContract;
+import barqsoft.footballscores.data.ScoresProvider;
+import barqsoft.footballscores.sync.FootballScoresSyncAdapter;
+import barqsoft.footballscores.util.Utility;
+
 public class MainScreenFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>
 {
-    public scoresAdapter mAdapter;
+    public ScoresAdapter mAdapter;
     public static final int SCORES_LOADER = 0;
-    private String[] fragmentdate = new String[1];
-    private int last_selected_item = -1;
+
+    private static final String[] SCORE_COLUMNS = {
+            DatabaseContract.ScoresEntry.TABLE_NAME + "."
+                    + DatabaseContract.ScoresEntry._ID,
+            DatabaseContract.ScoresEntry.TABLE_NAME + "."
+                    + DatabaseContract.ScoresEntry.MATCH_ID_COL,
+            DatabaseContract.ScoresEntry.TABLE_NAME + "."
+                    + DatabaseContract.ScoresEntry.HOME_GOALS_COL,
+            DatabaseContract.ScoresEntry.TABLE_NAME + "."
+                    + DatabaseContract.ScoresEntry.AWAY_GOALS_COL,
+            DatabaseContract.ScoresEntry.TABLE_NAME + "."
+                    + DatabaseContract.ScoresEntry.DATE_COL,
+            DatabaseContract.ScoresEntry.TABLE_NAME + "."
+                    + DatabaseContract.ScoresEntry.TIME_COL,
+            DatabaseContract.ScoresEntry.TABLE_NAME + "."
+                    + DatabaseContract.ScoresEntry.LEAGUE_ID_COL,
+            DatabaseContract.ScoresEntry.TABLE_NAME + "."
+                    + DatabaseContract.ScoresEntry.MATCHDAY_COL,
+            ScoresProvider.HOME_TEAM_TABLE_ALIAS + "." + DatabaseContract.TeamsEntry.NAME_COL,
+            ScoresProvider.AWAY_TEAM_TABLE_ALIAS + "." + DatabaseContract.TeamsEntry.NAME_COL,
+    };
+    // These indices are tied to SCORE_COLUMNS. If SCORE_COLUMNS changes, these must change too.
+    public static final int COL_ID = 0;
+    public static final int COL_SCORE_MATCH_ID = 1;
+    public static final int COL_SCORE_HOME_GOALS = 2;
+    public static final int COL_SCORE_AWAY_GOALS = 3;
+    public static final int COL_SCORE_DATE = 4;
+    public static final int COL_SCORE_TIME = 5;
+    public static final int COL_SCORE_LEAGUE_ID = 6;
+    public static final int COL_SCORE_MATCHDAY = 7;
+    public static final int COL_SCORE_HOME = 8;
+    public static final int COL_SCORE_AWAY = 9;
+
+    private String fragmentDate = null;
 
     public MainScreenFragment()
     {
     }
 
-    private void update_scores()
-    {
-        Intent service_start = new Intent(getActivity(), myFetchService.class);
-        getActivity().startService(service_start);
-    }
     public void setFragmentDate(String date)
     {
-        fragmentdate[0] = date;
+        fragmentDate = date;
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
-        update_scores();
+
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        final ListView score_list = (ListView) rootView.findViewById(R.id.scores_list);
-        mAdapter = new scoresAdapter(getActivity(),null,0);
-        score_list.setAdapter(mAdapter);
-        getLoaderManager().initLoader(SCORES_LOADER,null,this);
-        mAdapter.detail_match_id = MainActivity.selected_match_id;
-        score_list.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
+        final ListView scoreList = (ListView) rootView.findViewById(R.id.scores_list);
+        mAdapter = new ScoresAdapter(getActivity(), null, 0);
+        scoreList.setAdapter(mAdapter);
+        getLoaderManager().initLoader(SCORES_LOADER, null, this);
+        mAdapter.setDetailMatchId(MainActivity.selectedMatchId);
+        scoreList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                ViewHolder selected = (ViewHolder) view.getTag();
-                mAdapter.detail_match_id = selected.match_id;
-                MainActivity.selected_match_id = (int) selected.match_id;
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ScoresViewHolder selected = (ScoresViewHolder) view.getTag();
+                mAdapter.setDetailMatchId(selected.matchId);
+                MainActivity.selectedMatchId = (int) selected.matchId;
                 mAdapter.notifyDataSetChanged();
             }
         });
+
+        if (savedInstanceState==null) {
+            //Only call SyncAdapter the first time
+            Utility.updateMatchesInfo(getActivity(), new int[]{SCORES_LOADER}, this,
+                    Arrays.asList(FootballScoresSyncAdapter.MATCHES));
+        }
+
         return rootView;
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle)
     {
-        return new CursorLoader(getActivity(),DatabaseContract.scores_table.buildScoreWithDate(),
-                null,null,fragmentdate,null);
+        return new CursorLoader(getActivity(),
+                DatabaseContract.ScoresEntry.buildScoreWithDate(fragmentDate),
+                SCORE_COLUMNS,null,null,null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor)
     {
-        //Log.v(FetchScoreTask.LOG_TAG,"loader finished");
-        //cursor.moveToFirst();
-        /*
-        while (!cursor.isAfterLast())
-        {
-            Log.v(FetchScoreTask.LOG_TAG,cursor.getString(1));
-            cursor.moveToNext();
-        }
-        */
-
         int i = 0;
         cursor.moveToFirst();
         while (!cursor.isAfterLast())
@@ -89,9 +115,7 @@ public class MainScreenFragment extends Fragment implements LoaderManager.Loader
             i++;
             cursor.moveToNext();
         }
-        //Log.v(FetchScoreTask.LOG_TAG,"Loader query: " + String.valueOf(i));
         mAdapter.swapCursor(cursor);
-        //mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -99,6 +123,4 @@ public class MainScreenFragment extends Fragment implements LoaderManager.Loader
     {
         mAdapter.swapCursor(null);
     }
-
-
 }

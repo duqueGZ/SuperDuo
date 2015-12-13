@@ -24,8 +24,10 @@ import java.net.URL;
 import it.jaschke.alexandria.data.AlexandriaContract;
 import it.jaschke.alexandria.util.Utility;
 
-
 /**
+ *
+ * Modified by david.duque on 10/12/15
+ *
  * An {@link IntentService} subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
  * <p/>
@@ -33,6 +35,8 @@ import it.jaschke.alexandria.util.Utility;
 public class BookService extends IntentService {
 
     private final String LOG_TAG = BookService.class.getSimpleName();
+
+    private static final String SERVICE_NAME = "Alexandria";
 
     public static final String FETCH_BOOK = "it.jaschke.alexandria.services.action.FETCH_BOOK";
     public static final String DELETE_BOOK = "it.jaschke.alexandria.services.action.DELETE_BOOK";
@@ -49,7 +53,7 @@ public class BookService extends IntentService {
     public static final int BOOK_SEARCH_STATUS_UNKNOWN = 4;
 
     public BookService() {
-        super("Alexandria");
+        super(SERVICE_NAME);
     }
 
     @Override
@@ -72,7 +76,9 @@ public class BookService extends IntentService {
      */
     private void deleteBook(String ean) {
         if(ean!=null) {
-            getContentResolver().delete(AlexandriaContract.BookEntry.buildBookUri(Long.parseLong(ean)), null, null);
+            getContentResolver()
+                    .delete(AlexandriaContract.BookEntry.buildBookUri(Long.parseLong(ean)),
+                            null, null);
         }
     }
 
@@ -182,9 +188,6 @@ public class BookService extends IntentService {
                 bookArray = bookJson.getJSONArray(ITEMS);
             }else{
                 Utility.setBookSearchStatus(getApplicationContext(), BOOK_SEARCH_STATUS_NOT_FOUND);
-//                Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
-//                messageIntent.putExtra(MainActivity.MESSAGE_KEY,getResources().getString(R.string.not_found));
-//                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(messageIntent);
                 return;
             }
 
@@ -224,7 +227,8 @@ public class BookService extends IntentService {
         }
     }
 
-    private void writeBackBook(String ean, String title, String subtitle, String desc, String imgUrl) {
+    private void writeBackBook(String ean, String title, String subtitle, String desc,
+                               String imgUrl) {
         ContentValues values= new ContentValues();
         values.put(AlexandriaContract.BookEntry._ID, ean);
         values.put(AlexandriaContract.BookEntry.TITLE, title);

@@ -15,7 +15,6 @@ package it.jaschke.alexandria.barcode;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
@@ -25,7 +24,6 @@ import com.google.android.gms.vision.CameraSource;
 
 import java.util.HashSet;
 import java.util.Set;
-
 
 /**
  * A view which renders a series of custom graphics to be overlayed on top of an associated preview
@@ -55,7 +53,6 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
     private Set<T> mGraphics = new HashSet<>();
     private T mFirstGraphic;
 
-
     /**
      * Base class for a custom graphics object to be rendered within the graphic overlay.  Subclass
      * this and implement the {@link Graphic#draw(Canvas)} method to define the
@@ -64,11 +61,9 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
     public static abstract class Graphic {
         private GraphicOverlay mOverlay;
 
-
         public Graphic(GraphicOverlay overlay) {
             mOverlay = overlay;
         }
-
 
         /**
          * Draw the graphic on the supplied canvas.  Drawing should use the following methods to
@@ -84,7 +79,6 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
          */
         public abstract void draw(Canvas canvas);
 
-
         /**
          * Adjusts a horizontal value of the supplied value from the preview scale to the view
          * scale.
@@ -93,14 +87,12 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
             return horizontal * mOverlay.mWidthScaleFactor;
         }
 
-
         /**
          * Adjusts a vertical value of the supplied value from the preview scale to the view scale.
          */
         public float scaleY(float vertical) {
             return vertical * mOverlay.mHeightScaleFactor;
         }
-
 
         /**
          * Adjusts the x coordinate from the preview's coordinate system to the view coordinate
@@ -114,7 +106,6 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
             }
         }
 
-
         /**
          * Adjusts the y coordinate from the preview's coordinate system to the view coordinate
          * system.
@@ -122,7 +113,6 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
         public float translateY(float y) {
             return scaleY(y);
         }
-
 
         public void postInvalidate() {
             mOverlay.postInvalidate();
@@ -134,7 +124,6 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
         super(context, attrs);
     }
 
-
     /**
      * Removes all graphics from the overlay.
      */
@@ -145,7 +134,6 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
         }
         postInvalidate();
     }
-
 
     /**
      * Adds a graphic to the overlay.
@@ -160,7 +148,6 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
         postInvalidate();
     }
 
-
     /**
      * Removes a graphic from the overlay.
      */
@@ -174,7 +161,6 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
         postInvalidate();
     }
 
-
     /**
      * Returns the first (oldest) graphic added.  This is used
      * to get the barcode that was detected first.
@@ -185,7 +171,6 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
             return mFirstGraphic;
         }
     }
-
 
     /**
      * Sets the camera attributes for size and facing direction, which informs how to transform
@@ -200,14 +185,12 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
         postInvalidate();
     }
 
-
     /**
      * Draws the overlay with its associated graphic objects.
      */
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
 
         synchronized (mLock) {
             if ((mPreviewWidth != 0) && (mPreviewHeight != 0)) {

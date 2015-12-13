@@ -17,19 +17,23 @@ import java.util.Date;
 
 /**
  * Created by yehya khaled on 2/27/2015.
+ * Modified by David Duque. 12/02/2015.
  */
 public class PagerFragment extends Fragment
 {
     public static final int NUM_PAGES = 5;
     public ViewPager mPagerHandler;
-    private myPageAdapter mPagerAdapter;
+
+    private CustomPageAdapter mPagerAdapter;
     private MainScreenFragment[] viewFragments = new MainScreenFragment[5];
+
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState)
     {
         View rootView = inflater.inflate(R.layout.pager_fragment, container, false);
         mPagerHandler = (ViewPager) rootView.findViewById(R.id.pager);
-        mPagerAdapter = new myPageAdapter(getChildFragmentManager());
+        mPagerAdapter = new CustomPageAdapter(getChildFragmentManager());
         for (int i = 0;i < NUM_PAGES;i++)
         {
             Date fragmentdate = new Date(System.currentTimeMillis()+((i-2)*86400000));
@@ -38,10 +42,11 @@ public class PagerFragment extends Fragment
             viewFragments[i].setFragmentDate(mformat.format(fragmentdate));
         }
         mPagerHandler.setAdapter(mPagerAdapter);
-        mPagerHandler.setCurrentItem(MainActivity.current_fragment);
+        mPagerHandler.setCurrentItem(MainActivity.currentFragment);
+
         return rootView;
     }
-    private class myPageAdapter extends FragmentStatePagerAdapter
+    private class CustomPageAdapter extends FragmentStatePagerAdapter
     {
         @Override
         public Fragment getItem(int i)
@@ -55,20 +60,21 @@ public class PagerFragment extends Fragment
             return NUM_PAGES;
         }
 
-        public myPageAdapter(FragmentManager fm)
+        public CustomPageAdapter(FragmentManager fm)
         {
             super(fm);
         }
+
         // Returns the page title for the top indicator
         @Override
         public CharSequence getPageTitle(int position)
         {
             return getDayName(getActivity(),System.currentTimeMillis()+((position-2)*86400000));
         }
+
         public String getDayName(Context context, long dateInMillis) {
             // If the date is today, return the localized version of "Today" instead of the actual
             // day name.
-
             Time t = new Time();
             t.setToNow();
             int julianDay = Time.getJulianDay(dateInMillis, t.gmtoff);
@@ -86,9 +92,12 @@ public class PagerFragment extends Fragment
             {
                 Time time = new Time();
                 time.setToNow();
-                // Otherwise, the format is just the day of the week (e.g "Wednesday".
+                // Otherwise, the format is just the day of the week (e.g "Wednesday").
                 SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
-                return dayFormat.format(dateInMillis);
+                String dayName = dayFormat.format(dateInMillis);
+                dayName = dayName.substring(0, 1).toUpperCase() + dayName.substring(1);
+
+                return dayName;
             }
         }
     }

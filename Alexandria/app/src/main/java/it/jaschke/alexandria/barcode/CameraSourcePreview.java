@@ -34,53 +34,41 @@ import java.io.IOException;
 public class CameraSourcePreview extends ViewGroup {
     private static final String TAG = "CameraSourcePreview";
 
-
     private Context mContext;
     private SurfaceView mSurfaceView;
     private boolean mStartRequested;
     private boolean mSurfaceAvailable;
     private CameraSource mCameraSource;
-
-
     private GraphicOverlay mOverlay;
-
 
     public CameraSourcePreview(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         mStartRequested = false;
         mSurfaceAvailable = false;
-
-
         mSurfaceView = new SurfaceView(context);
         mSurfaceView.getHolder().addCallback(new SurfaceCallback());
         addView(mSurfaceView);
     }
-
 
     @RequiresPermission(Manifest.permission.CAMERA)
     public void start(CameraSource cameraSource) throws IOException, SecurityException {
         if (cameraSource == null) {
             stop();
         }
-
-
         mCameraSource = cameraSource;
-
-
         if (mCameraSource != null) {
             mStartRequested = true;
             startIfReady();
         }
     }
 
-
     @RequiresPermission(Manifest.permission.CAMERA)
-    public void start(CameraSource cameraSource, GraphicOverlay overlay) throws IOException, SecurityException {
+    public void start(CameraSource cameraSource, GraphicOverlay overlay)
+            throws IOException, SecurityException {
         mOverlay = overlay;
         start(cameraSource);
     }
-
 
     public void stop() {
         if (mCameraSource != null) {
@@ -88,14 +76,12 @@ public class CameraSourcePreview extends ViewGroup {
         }
     }
 
-
     public void release() {
         if (mCameraSource != null) {
             mCameraSource.release();
             mCameraSource = null;
         }
     }
-
 
     @RequiresPermission(Manifest.permission.CAMERA)
     private void startIfReady() throws IOException, SecurityException {
@@ -118,7 +104,6 @@ public class CameraSourcePreview extends ViewGroup {
         }
     }
 
-
     private class SurfaceCallback implements SurfaceHolder.Callback {
         @Override
         public void surfaceCreated(SurfaceHolder surface) {
@@ -132,18 +117,15 @@ public class CameraSourcePreview extends ViewGroup {
             }
         }
 
-
         @Override
         public void surfaceDestroyed(SurfaceHolder surface) {
             mSurfaceAvailable = false;
         }
 
-
         @Override
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         }
     }
-
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
@@ -157,7 +139,6 @@ public class CameraSourcePreview extends ViewGroup {
             }
         }
 
-
         // Swap width and height sizes when in portrait, since it will be rotated 90 degrees
         if (isPortraitMode()) {
             int tmp = width;
@@ -166,15 +147,12 @@ public class CameraSourcePreview extends ViewGroup {
             height = tmp;
         }
 
-
         final int layoutWidth = right - left;
         final int layoutHeight = bottom - top;
-
 
         // Computes height and width for potentially doing fit width.
         int childWidth = layoutWidth;
         int childHeight = (int)(((float) layoutWidth / (float) width) * height);
-
 
         // If height is too tall using fit width, does fit height instead.
         if (childHeight > layoutHeight) {
@@ -182,11 +160,9 @@ public class CameraSourcePreview extends ViewGroup {
             childWidth = (int)(((float) layoutHeight / (float) height) * width);
         }
 
-
         for (int i = 0; i < getChildCount(); ++i) {
             getChildAt(i).layout(0, 0, childWidth, childHeight);
         }
-
 
         try {
             startIfReady();
@@ -197,7 +173,6 @@ public class CameraSourcePreview extends ViewGroup {
         }
     }
 
-
     private boolean isPortraitMode() {
         int orientation = mContext.getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -206,7 +181,6 @@ public class CameraSourcePreview extends ViewGroup {
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             return true;
         }
-
 
         Log.d(TAG, "isPortraitMode returning false by default");
         return false;
