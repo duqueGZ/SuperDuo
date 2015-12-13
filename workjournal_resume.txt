@@ -1,0 +1,49 @@
+**** ALEXANDRIA ****
+
+ - Included barcode scanner functionality. Implemented by using a library (not directly calling to another external app). Implementation
+   based on googlesamples/android-vision example (https://github.com/googlesamples/android-vision.git).
+ - Fixed error that made the app crash when searching a new book without network connection. Introduced the use of SharedPreferences saved
+   status.
+ - Included internalization support. Included strings.xml both for default (in english) and for spanish versions.
+ - Upgrade to 23 the targetSdkVersion (it was needed while implementing the barcode scanner functionality)
+ - Detected and fixed a bug that made the app crash when switching screen orientation in Book Detail screen (due to the use of the 
+   ShareIntent).
+ - Detected a NetworkOnMainThreadException on app startup, caused by the use of code coverage tool, jacoco. So, this use has been 
+   deactivated in the app current version.
+ - Made some (just a little) refactorization and improvements (both in layout and logic part).
+
+ --- Possible further tasks left as future work lines:
+   > Analyze the problem caused by jacoco library and correctly include it in the project in order to get back the code coverage 
+     functionality.
+   > Implement a full test suite.
+   > Change the use of DownloadImage AsyncTask in order to get book covers, in order to use a library such as Glide (more efficient 
+     image loading, caching, etc.)
+   > Continue improving the current version of the app code.
+   > Optimize API calls.
+
+*************************
+
+**** FOOTBALL SCORES ****
+
+ - Included two widgets: a simple one, that allows to see the info for the last or next match from your favourite team. And a more 
+   complex one, a collection widget that allows to see the list of matches from a selected league (including matches for last, next or
+   both weeks).
+ - Included several missing content descriptions and improved several of those who already existed in the initial app version
+ - Implemented layout mirroring support.
+ - Included internalization support. Included strings.xml both for default (in english) and for spanish versions.
+ - Change the way the app communicates with football-data.org API, in order to use a SyncAdapter (which is a better and simpler way to 
+   get the data regularly and automatically updated.
+ - Upgrade to 15 the minSdkVersion, as I think that it is a more suitable option and one that still covers the great majority of current 
+   Android devices.
+ - Made some refactorization (including the use of ButterKnife library in order to get a cleaner and more maintainable code), logic and
+   layout code improvements, and also database model changes in order to get a more optimal version.
+
+ --- Possible further tasks left as future work lines:
+   > Implement a full test suite.
+   > Improve the images loading, by using a library such as Glide (more efficient image loading, caching, etc.). In addition, implements 
+     the support in order to directly obtain all the teams logos from the Internet (i.e., by using the crest urls provided by 
+     football-data.org API).
+   > Include support for a larger number of leagues and teams (the goal will be to support all the leagues available at football-data.org).
+     Besides, include a settings screen where the user would be able to configure the leagues for which the info will be retrieved.
+   > Continue improving the current version of the app code.
+   > Optimize API calls.
