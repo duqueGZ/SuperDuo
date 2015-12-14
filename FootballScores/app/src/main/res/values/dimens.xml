@@ -12,6 +12,11 @@
     <dimen name="about_text">12sp</dimen>
     <dimen name="widget_spinner_text">16sp</dimen>
 
+    <!-- Widgets -->
+    <dimen name="widget_items_botton_margin">15dp</dimen>
+    <dimen name="widget_items_start_margin">5dp</dimen>
+    <dimen name="spinner_item_padding">5dp</dimen>
+
     <!-- Match Widget -->
     <dimen name="widget_match_default_width">330dp</dimen>
     <dimen name="widget_match_default_height">40dp</dimen>
@@ -25,4 +30,13 @@
     <dimen name="widget_match_list_min_resize_height">
         @dimen/widget_match_list_default_height
     </dimen>
+    <dimen name="widget_match_list_icon_padding">2dp</dimen>
+
+    <!-- Activities and Fragments -->
+    <dimen name="match_detail_top_margin">20dp</dimen>
+    <dimen name="match_detail_share_button_padding">100dp</dimen>
+    <dimen name="pagertabstrip_padding">4dp</dimen>
+    <dimen name="match_list_item_elevation">4dp</dimen>
+    <dimen name="match_list_item_padding">5dp</dimen>
+    <dimen name="main_divider_height">15sp</dimen>
 </resources>

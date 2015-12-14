@@ -14,7 +14,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="@dimen/widget_items_botton_margin"
         android:textStyle="bold"
         android:textSize="@dimen/widget_configuration_label"
         android:text="@string/select_league" />
@@ -23,14 +23,14 @@
         android:id="@+id/league_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginBottom="15dp" />
+        android:layout_marginLeft="@dimen/widget_items_start_margin"
+        android:layout_marginStart="@dimen/widget_items_start_margin"
+        android:layout_marginBottom="@dimen/widget_items_botton_margin" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="@dimen/widget_items_botton_margin"
         android:textStyle="bold"
         android:textSize="@dimen/widget_configuration_label"
         android:text="@string/select_favourite_team" />
@@ -39,14 +39,14 @@
         android:id="@+id/favourite_team_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginBottom="15dp" />
+        android:layout_marginLeft="@dimen/widget_items_start_margin"
+        android:layout_marginStart="@dimen/widget_items_start_margin"
+        android:layout_marginBottom="@dimen/widget_items_botton_margin" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="@dimen/widget_items_botton_margin"
         android:textStyle="bold"
         android:textSize="@dimen/widget_configuration_label"
         android:text="@string/select_time_range" />
@@ -55,9 +55,9 @@
         android:id="@+id/match_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginBottom="15dp" />
+        android:layout_marginLeft="@dimen/widget_items_start_margin"
+        android:layout_marginStart="@dimen/widget_items_start_margin"
+        android:layout_marginBottom="@dimen/widget_items_botton_margin" />
 
     <Button
         android:id="@+id/ok_button"

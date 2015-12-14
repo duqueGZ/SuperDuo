@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:elevation="4dp"
+    android:elevation="@dimen/match_list_item_elevation"
     android:background="@drawable/list_item"
     android:id="@+id/match_item">
 
@@ -13,7 +13,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp">
+        android:padding="@dimen/match_list_item_padding">
 
         <LinearLayout
             android:layout_width="0dp"
